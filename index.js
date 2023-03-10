@@ -3,13 +3,16 @@ const express = require("express");
 // JSON data import
 const { users } = require("./data/users.json")  
 
+
+//importing routes 
+const usersRouter = require("./routes/users")
+const booksRouter = require("./routes/books")
 const app = express();
 
-@@ -8,13 +10,116 @@ app.use(express.json());
-
+const PORT = 8081;
+app.use(express.json());
 app.get('/',(req,res)=> {
     res.status(200).json({
-        message: "Server is up and running"
         message: "Server is up and running",
     });
 });
@@ -115,15 +118,15 @@ app.put('/users/:id',(req,res)=>{
         data: updatedUser,
      })
 });
+app.use('/users', usersRouter);
+app.use('/books', booksRouter)
 
 
 app.get("*", (req,res)=>{
     res.status(404).json({
-        message: "This route does not exit"
         message: "This route does not exist",
     });
 });
-
 app.listen(PORT,()=>{
     console.log(`Server is running at port ${PORT}`)
 });
