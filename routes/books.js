@@ -1,8 +1,10 @@
+
 const express = require('express');
 const {books} = require('../data/books.json');
 const {users} = require('../data/users.json');
+const { UserModel, BookModel } = require('../models');
+const {getAllBooks,getSingleBookById,getAllIssuedBooks } = require("../controllers/book-controller")
 const router = express.Router();
-
 
 
 /**
@@ -18,6 +20,7 @@ router.get('/',(req,res)=>{
         data: books
     })
 })
+router.get('/',getAllBooks);
 
 /**
  * Route : /books/:id
@@ -43,6 +46,7 @@ router.get('/:id',(req,res)=>{
     data : book
    })
 })
+router.get('/:id',getSingleBookById)
 
 /**
  * Route : /books/issued/by-user
@@ -78,6 +82,7 @@ router.get("/issued/by-user", (req,res)=>{
         data : issuedBooks
     })
 })
+router.get("/issued/by-user", getAllIssuedBooks)
 
 /**
  * Route : /books
@@ -87,10 +92,8 @@ router.get("/issued/by-user", (req,res)=>{
  * Parameters : none
  * Data : aothor, name, genre , publisher ,id
  */
-
 router.post('/', (req,res)=>{
     const {data} = req.body;
-
     if(!data){
         return res.status(400).json({
           success : false,
@@ -98,21 +101,18 @@ router.post('/', (req,res)=>{
         })
     }
     const book = books.find((each)=> each.id === data.id);
-
     if(book){
         return res.status(404).json({
             success: false,
             message: "Book already existes with this id ,please use a unique id"
         })
     }
-
     const allBooks = [...books ,data];
         return res.status(201).json({
             success : true,
             data : allBooks
         })
 })
-
 /**
  * Route : /books/:id
  * Method : Put
@@ -121,20 +121,16 @@ router.post('/', (req,res)=>{
  * Parameters : id
  * Data : aothor, name, genre , publisher ,id
  */
-
 router.put("/:id",(req,res)=>{
     const {id} = req.params;
     const {data} = req.body;
-
     const book = books.find((each)=> each.id === id);
-
     if(!book){
         return res.status(404).json({
             success: false,
             message: "Book not found with this perticular id"
         })
     }
-
     const updateData = books.map((each)=>{
         if(each.id === id ){
             return {...each ,...data}
@@ -146,7 +142,5 @@ router.put("/:id",(req,res)=>{
         data: updateData
     })
 })
-
-
 //default export
 module.exports = router;
